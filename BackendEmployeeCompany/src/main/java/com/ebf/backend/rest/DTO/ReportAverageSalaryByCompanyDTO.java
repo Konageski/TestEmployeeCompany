@@ -1,4 +1,4 @@
-package com.ebf.backend.rest;
+package com.ebf.backend.rest.DTO;
 
 import com.ebf.backend.db.entity.CompanyEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;

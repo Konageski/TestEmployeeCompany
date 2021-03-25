@@ -1,9 +1,11 @@
 package com.ebf.backend.rest;
 
-import com.ebf.backend.db.entity.CompanyEntity;
+import com.ebf.backend.db.entity.EmployeeEntity;
 import com.ebf.backend.db.repository.CompanyRepository;
 import com.ebf.backend.db.repository.EmployeeRepository;
+import com.ebf.backend.rest.DTO.*;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +25,11 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-public class CompanyControllerTest {
+public class EmployeeControllerTest {
 
     @Value("${api.version}")
     private String API_VERSION;
-    private final String MODULE_NAME = "company";
+    private final String MODULE_NAME = "employees";
 
     @Autowired
     private MockMvc mockMvc;
@@ -39,96 +41,149 @@ public class CompanyControllerTest {
 
     @Test
     public void testInsertOK() throws Exception {
-        CompanyDTO companyDTO = this.createEntity(createDTO());
-        CompanyEntity companyEntity = this.companyRepository.findById(companyDTO.getId()).get();
+        EmployeeDTO employeeDTO = this.createEntity(createDTO());
+        EmployeeEntity employeeEntity = this.employeeRepository.findById(employeeDTO.getId()).get();
 
-        assertThat(companyDTO.getId()).isEqualTo(companyEntity.getId());
-        assertThat(companyDTO.getName()).isEqualTo(companyEntity.getName());
-
-//        EmployeeDTO employeeDTO = (EmployeeDTO) companyDTO.getEmployees().toArray()[0];
-//        EmployeeEntity employeeEntity = this.employeeRepository.findById(employeeDTO.getId()).get();
-//
-//        assertThat(employeeDTO.getId()).isEqualTo(employeeEntity.getId());
-//        assertThat(employeeDTO.getSurname()).isEqualTo(employeeEntity.getSurname());
-//        assertThat(employeeDTO.getEmail()).isEqualTo(employeeEntity.getEmail());
-//        assertThat(employeeDTO.getAddress()).isEqualTo(employeeEntity.getAddress());
-//        assertThat(employeeDTO.getSalary()).isEqualTo(employeeEntity.getSalary());
+        assertThat(employeeDTO.getId()).isEqualTo(employeeEntity.getId());
+        assertThat(employeeDTO.getName()).isEqualTo(employeeEntity.getName());
+        assertThat(employeeDTO.getSurname()).isEqualTo(employeeEntity.getSurname());
+        assertThat(employeeDTO.getEmail()).isEqualTo(employeeEntity.getEmail());
+        assertThat(employeeDTO.getAddress()).isEqualTo(employeeEntity.getAddress());
+        assertThat(employeeDTO.getSalary()).isEqualTo(employeeEntity.getSalary());
     }
 
     @Test
     public void testInsertError() throws Exception {
-        CompanyDTO companyDTO = createDTO();
-        companyDTO.setName("");
-        testInsertError(companyDTO, "Company Name is required!");
+        EmployeeDTO dto = createDTO();
+        dto.setName("");
+        testInsertError(dto, "Employee Name is required!");
 
-//        companyDTO = createDTO();
-//        companyDTO.getEmployees().forEach(employeeDTO1 -> employeeDTO1.setName(""));
-//        testInsertError(companyDTO, "Employee Name is required!");
-//
-//        companyDTO = createDTO();
-//        companyDTO.getEmployees().forEach(employeeDTO1 -> employeeDTO1.setSurname(""));
-//        testInsertError(companyDTO, "Employee Surname is required!");
-//
-//        companyDTO = createDTO();
-//        companyDTO.getEmployees().forEach(employeeDTO1 -> employeeDTO1.setEmail(""));
-//        testInsertError(companyDTO, "Employee Email is required!");
-//
-//        companyDTO = createDTO();
-//        companyDTO.getEmployees().forEach(employeeDTO1 -> employeeDTO1.setAddress(""));
-//        testInsertError(companyDTO, "Employee Address is required!");
-//
-//        companyDTO = createDTO();
-//        companyDTO.getEmployees().forEach(employeeDTO1 -> employeeDTO1.setSalary(-1.0f));
-//        testInsertError(companyDTO, "Employee Salary is required!");
+        dto = createDTO();
+        dto.setSurname("");
+        testInsertError(dto, "Employee Surname is required!");
+
+        dto = createDTO();
+        dto.setEmail("");
+        testInsertError(dto, "Employee Email is required!");
+
+        dto = createDTO();
+        dto.setAddress("");
+        testInsertError(dto, "Employee Address is required!");
+
+        dto = createDTO();
+        dto.setSalary(-1.0f);
+        testInsertError(dto, "Employee Salary is required!");
+
+        dto = createDTO();
+        dto.setCompany(null);
+        testInsertError(dto, "Employee Company is required!");
     }
 
     @Test
     public void testUpdateOK() throws Exception {
-        CompanyDTO companyDTO = this.createEntity(createDTO());
-        companyDTO.setName("New Name");
+        EmployeeDTO dto = this.createEntity(createDTO());
+        dto.setName("New Name");
+        dto.setSurname("New Surname");
+        dto.setEmail("New Email");
+        dto.setAddress("New Address");
+        dto.setSalary(98765.4f);
+        dto.setCompany(new CompanyDTO(2L, "Pepsi", new HashSet<>()));
 
-        String json = new ObjectMapper().writeValueAsString(companyDTO);
+        String json = new ObjectMapper().writeValueAsString(new EmployeeWrapperDTO(dto));
         MvcResult mvcResult = this.mockMvc.perform(put("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/1").content(json)
                 .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk()).andReturn();
 
-        companyDTO = new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), CompanyDTO.class);
-        CompanyEntity companyEntity = this.companyRepository.findById(companyDTO.getId()).get();
+        ObjectMapper objectMapper =  new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        dto = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
+        EmployeeEntity entity = this.employeeRepository.findById(dto.getId()).get();
 
-        assertThat(companyDTO.getId()).isEqualTo(companyEntity.getId());
-        assertThat(companyDTO.getName()).isEqualTo(companyEntity.getName());
+        assertThat(dto.getId()).isEqualTo(entity.getId());
+        assertThat(dto.getName()).isEqualTo(entity.getName());
+        assertThat(dto.getSurname()).isEqualTo(entity.getSurname());
+        assertThat(dto.getEmail()).isEqualTo(entity.getEmail());
+        assertThat(dto.getAddress()).isEqualTo(entity.getAddress());
+        assertThat(dto.getSalary()).isEqualTo(entity.getSalary());
+        assertThat(dto.getCompany().getId()).isEqualTo(entity.getCompanyEntity().getId());
     }
 
     @Test
     public void testUpdateError() throws Exception {
-        CompanyDTO companyDTO = createDTO();
-        companyDTO.setId(-1L);
-        testUpdateError(companyDTO, "Company Id is required!");
+        EmployeeDTO dto = createDTO();
+        dto.setId(-1L);
+        testUpdateError(dto, "Employee Id is required!");
 
-        companyDTO = createDTO();
-        companyDTO.setName("");
-        testUpdateError(companyDTO, "Company Name is required!");
+        dto = createDTO();
+        dto.setName("");
+        testUpdateError(dto, "Employee Name is required!");
+
+        dto = createDTO();
+        dto.setSurname("");
+        testUpdateError(dto, "Employee Surname is required!");
+
+        dto = createDTO();
+        dto.setEmail("");
+        testUpdateError(dto, "Employee Email is required!");
+
+        dto = createDTO();
+        dto.setAddress("");
+        testUpdateError(dto, "Employee Address is required!");
+
+        dto = createDTO();
+        dto.setSalary(-1f);
+        testUpdateError(dto, "Employee Salary is required!");
+
+        dto = createDTO();
+        dto.setCompany(null);
+        testUpdateError(dto, "Employee Company is required!");
     }
 
     @Test
     public void testDeleteOK() throws Exception {
-        CompanyDTO companyDTO = this.createEntity(createDTO());
+        EmployeeDTO dto = this.createEntity(createDTO());
 
-        this.mockMvc.perform(delete("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/" + companyDTO.getId())).andDo(print()).andExpect(status().isOk());
-        assertThat(this.companyRepository.findById(companyDTO.getId()).isPresent()).isFalse();
+        this.mockMvc.perform(delete("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/" + dto.getId())).andDo(print()).andExpect(status().isOk());
+        assertThat(this.companyRepository.findById(dto.getId()).isPresent()).isFalse();
     }
 
     @Test
     public void testDeleteError() throws Exception {
-        CompanyDTO companyDTO = this.createEntity(createDTO());
+        EmployeeDTO dto = this.createEntity(createDTO());
 
-        this.mockMvc.perform(delete("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/" + companyDTO.getId())).andDo(print()).andExpect(status().isOk());
-        assertThat(this.companyRepository.findById(companyDTO.getId()).isPresent()).isFalse();
+        this.mockMvc.perform(delete("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/" + dto.getId())).andDo(print()).andExpect(status().isOk());
+        assertThat(this.companyRepository.findById(dto.getId()).isPresent()).isFalse();
 
         try {
             this.mockMvc.perform(delete("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/")).andDo(print());
         } catch (Exception ex) {
             assertThat(ex.getCause().getMessage()).isEqualTo("Company Id is required!");
+        }
+    }
+
+    @Test
+    public void testGetById() throws Exception {
+        EmployeeDTO dto = this.createEntity(createDTO());
+        MvcResult mvcResult = this.mockMvc.perform(get("/api/" + this.API_VERSION + "/" + this.MODULE_NAME + "/" + dto.getId()))
+                .andDo(print()).andExpect(status().isOk()).andReturn();
+
+        ObjectMapper objectMapper =  new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        EmployeeDTO dtoReturn = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
+
+        assertThat(dto.getId()).isEqualTo(dtoReturn.getId());
+        assertThat(dto.getName()).isEqualTo(dtoReturn.getName());
+        assertThat(dto.getSurname()).isEqualTo(dtoReturn.getSurname());
+        assertThat(dto.getEmail()).isEqualTo(dtoReturn.getEmail());
+        assertThat(dto.getAddress()).isEqualTo(dtoReturn.getAddress());
+        assertThat(dto.getSalary()).isEqualTo(dtoReturn.getSalary());
+        assertThat(dto.getCompany().getId()).isEqualTo(dtoReturn.getCompany().getId());
+    }
+
+    @Test
+    public void testGetByIdError() throws Exception {
+        try {
+            this.mockMvc.perform(get("/api/" + this.API_VERSION + "/" + this.MODULE_NAME + "/99999999")).andDo(print());
+        } catch (Exception ex) {
+            assertThat(ex.getCause().getMessage()).isEqualTo("Could not find Employee   Id: 99999999");
         }
     }
 
@@ -139,22 +194,22 @@ public class CompanyControllerTest {
         assertThat(mvcResult.getResponse().getContentAsString().isEmpty()).isFalse();
     }
 
-    private CompanyDTO createDTO() {
-        CompanyDTO companyDTO = new CompanyDTO(null, "Test Corp", new HashSet<>());
-        companyDTO.getEmployees().add(new EmployeeDTO(null, "Test", "Employee", "test@test.com", "Adr 1", 123456.78f));
-        return  companyDTO;
+    private EmployeeDTO createDTO() {
+        CompanyDTO companyDTO = new CompanyDTO(1L, "Coca-Cola", new HashSet<>());
+        return new EmployeeDTO(null, "Test", "Employee", "test@test.com", "Adr 1", 123456.78f, companyDTO);
     }
 
-    private CompanyDTO createEntity(CompanyDTO dto) throws Exception {
-        String json = new ObjectMapper().writeValueAsString(dto);
+    private EmployeeDTO createEntity(EmployeeDTO dto) throws Exception {
+        String json = new ObjectMapper().writeValueAsString(new EmployeeWrapperDTO(dto));
         MvcResult mvcResult = this.mockMvc.perform(post("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/").content(json)
                 .contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON)).andDo(print())
                 .andExpect(status().isOk()).andReturn();
-        return new ObjectMapper().readValue(mvcResult.getResponse().getContentAsString(), CompanyDTO.class);
+        ObjectMapper objectMapper =  new ObjectMapper().configure(DeserializationFeature.UNWRAP_ROOT_VALUE, true);
+        return objectMapper.readValue(mvcResult.getResponse().getContentAsString(), EmployeeDTO.class);
     }
 
-    private void testInsertError(CompanyDTO companyDTO, String message) throws JsonProcessingException {
-        String json = new ObjectMapper().writeValueAsString(companyDTO);
+    private void testInsertError(EmployeeDTO dto, String message) throws JsonProcessingException {
+        String json = new ObjectMapper().writeValueAsString(new EmployeeWrapperDTO(dto));
         try {
             this.mockMvc.perform(post("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/").content(json).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         } catch (Exception ex) {
@@ -162,10 +217,10 @@ public class CompanyControllerTest {
         }
     }
 
-    private void testUpdateError(CompanyDTO companyDTO, String message) throws JsonProcessingException {
-        String json = new ObjectMapper().writeValueAsString(companyDTO);
+    private void testUpdateError(EmployeeDTO dto, String message) throws JsonProcessingException {
+        String json = new ObjectMapper().writeValueAsString(new EmployeeWrapperDTO(dto));
         try {
-            this.mockMvc.perform(put("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/" + companyDTO.getId()).content(json).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
+            this.mockMvc.perform(put("/api/" + this.API_VERSION + "/" + this.MODULE_NAME +"/" + dto.getId()).content(json).contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON));
         } catch (Exception ex) {
             assertThat(ex.getCause().getMessage()).isEqualTo(message);
         }

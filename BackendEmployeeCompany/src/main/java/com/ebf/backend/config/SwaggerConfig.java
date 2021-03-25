@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
-import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.spi.DocumentationType;
@@ -22,18 +21,15 @@ public class SwaggerConfig {
     public Docket createDocket() {
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
-//                .protocols(Sets.newHashSet("https", "http"))
                 .apiInfo(apiInfo())
                 .select()
-                .apis(RequestHandlerSelectors.basePackage("com.jos.dem.swagger"))
+                .apis(RequestHandlerSelectors.basePackage("com.ebf.backend.rest"))
                 .build();
     }
 
     private ApiInfo apiInfo() {
         return new ApiInfoBuilder()
-                .title("Spring Boot Swagger")
-                .description("Automated JSON API documentation for API's built with Spring")
-                .termsOfServiceUrl("https://josdem.io/")
+                .title("EBF API Document")
                 .version(version)
                 .build();
     }

@@ -1,7 +1,8 @@
-package com.ebf.backend.rest;
+package com.ebf.backend.rest.DTO;
 
 import com.ebf.backend.db.entity.EmployeeEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonRootName;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.Set;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonRootName(value="employee")
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @ApiModel(value = "Employee DTO", description = "Represents an Employee entity")
 public class EmployeeDTO {
@@ -33,7 +35,7 @@ public class EmployeeDTO {
     @ApiModelProperty(value = "Employee's Salary", required = true)
     private Float salary;
     @ApiModelProperty(value = "Employee's Company", required = true)
-    private CompanyDTO companyDTO;
+    private CompanyDTO company;
 
     public EmployeeDTO(EmployeeEntity employeeEntity) {
         this.id = employeeEntity.getId();
@@ -45,7 +47,7 @@ public class EmployeeDTO {
 
         if (employeeEntity.getCompanyEntity() != null) {
             employeeEntity.getCompanyEntity().setEmployeeEntities(null);
-            this.companyDTO = new CompanyDTO(employeeEntity.getCompanyEntity());
+            this.company = new CompanyDTO(employeeEntity.getCompanyEntity());
         }
     }
 
@@ -58,9 +60,9 @@ public class EmployeeDTO {
         employeeEntity.setAddress(employeeDTO.getAddress());
         employeeEntity.setSalary(employeeDTO.getSalary());
 
-        if (employeeDTO.getCompanyDTO() != null) {
-            employeeDTO.getCompanyDTO().setEmployees(null);
-            employeeEntity.setCompanyEntity(CompanyDTO.convertCompanyDtoToEntity(employeeDTO.getCompanyDTO()));
+        if (employeeDTO.getCompany() != null) {
+            employeeDTO.getCompany().setEmployees(null);
+            employeeEntity.setCompanyEntity(CompanyDTO.convertCompanyDtoToEntity(employeeDTO.getCompany()));
         }
 
         return employeeEntity;

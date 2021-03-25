@@ -1,0 +1,27 @@
+{{page-title "List of Companies"}}
+
+<section class="company-section">
+    <div>
+        <h2 class="company-title">List of Companies</h2>
+        <button class="btn btn-primary company-title-add" {{action "onOpenNew" company post on="click"}}>Add</button>
+    </div>
+
+    <table class="table table-striped table-hover">
+        <thead class="bg-primary">
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Name</th>
+                <th scope="col">Number of employees</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each this.companies as |company|}}
+                <tr {{action "onEdit" company post on="click"}}>
+                    <th>{{company.id}}</th>
+                    <td>{{company.name}}</td>
+                    <td>{{company.employees.length}}</td>
+                </tr>
+            {{/each}}
+        </tbody>
+    </table>
+</section>

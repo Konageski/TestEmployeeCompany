@@ -1,4 +1,4 @@
-package com.ebf.backend.rest;
+package com.ebf.backend.rest.DTO;
 
 import com.ebf.backend.db.entity.CompanyEntity;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -43,7 +43,7 @@ public class CompanyDTO {
         companyEntity.setName(companyDTO.getName());
 
         if (companyDTO.getEmployees() != null && !companyDTO.getEmployees().isEmpty()) {
-            companyDTO.getEmployees().forEach(employeeDTO -> employeeDTO.setCompanyDTO(null));
+            companyDTO.getEmployees().forEach(employeeDTO -> employeeDTO.setCompany(null));
             companyEntity.setEmployeeEntities(EmployeeDTO.convertEmployeesDtoToEntity(companyDTO.getEmployees()));
         }
         return companyEntity;

@@ -1,21 +1,34 @@
 package com.ebf.backend.db.entity;
 
-import lombok.Data;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
 
-@Entity
-@Data
-public class Company {
+@Entity(name = "company")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class CompanyEntity {
 
     @Id @GeneratedValue(generator = "company_generator")
     private Long id;
     private String name;
-    @OneToMany(mappedBy = "company", fetch = FetchType.LAZY)
-    private Set<Employee> employees;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "companyEntity", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private Set<EmployeeEntity> employeeEntities;
 
-    public Company(String name) {
+    public CompanyEntity(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "CompanyEntity{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

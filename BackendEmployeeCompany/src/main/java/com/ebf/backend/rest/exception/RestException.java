@@ -1,8 +1,8 @@
 package com.ebf.backend.rest.exception;
 
-public class RestNotFoundException extends RuntimeException {
+public class RestException extends RuntimeException {
 
-    public RestNotFoundException(String name, Long id) {
-        super("Could not find " + name + "   Id: " + id);
+    public RestException(String message) {
+        super(message);
     }
 }

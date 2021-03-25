@@ -1,0 +1,90 @@
+{{page-title "Employee Edit"}}
+
+<div class="employee-edit-body">
+    <div>
+        <h1>Employee</h1>
+    </div>
+
+    <form class="employee-edit-form">
+        <div class="input-group mb-3 employee-edit-form-id">
+            <div class="input-group-prepend">
+                <span class="input-group-text employee-edit-form-label" id="basic-addon-id" style="width:100px">Id</span>
+            </div>
+            <Input type="number" disabled maxlength="4" class="form-control" aria-describedby="basic-addon-id"
+                @value={{this.employee.id}} />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text employee-edit-form-label" id="basic-addon-name">Name</span>
+            </div>
+            <Input type="text" class="form-control" maxlength="100" placeholder="Employee Name"
+                aria-label="Employee Name" aria-describedby="basic-addon-name" @value={{this.employee.name}} />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text employee-edit-form-label" id="basic-addon-surname">Surname</span>
+            </div>
+            <Input type="text" class="form-control" maxlength="100" placeholder="Employee Surname"
+                aria-label="Employee Surname" aria-describedby="basic-addon-surname" @value={{this.employee.surname}} />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text employee-edit-form-label" id="basic-addon-email">Email</span>
+            </div>
+            <Input type="text" class="form-control" maxlength="100" placeholder="Employee Email"
+                aria-label="Employee Email" aria-describedby="basic-addon-email" @value={{this.employee.email}} />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text employee-edit-form-label" id="basic-addon-address">Address</span>
+            </div>
+            <Input type="text" class="form-control" maxlength="100" placeholder="Employee Address"
+                aria-label="Employee Address" aria-describedby="basic-addon-address" @value={{this.employee.address}} />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text employee-edit-form-label" id="basic-addon-salary">Salary</span>
+            </div>
+            <Input type="number" maxlength="8" class="form-control" aria-describedby="basic-addon-salary" @value={{this.employee.salary}}/>
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <label class="input-group-text employee-edit-form-label" for="inputGroupSelect01">Company</label>
+            </div>
+            <select class="custom-select" id="inputGroupSelect01" onchange={{action "onChangeCompany" value="target.value"}}>
+                <option value="0">Choose...</option>
+                {{#each this.companies as |company|}}
+                    <option value="{{company.id}}" selected={{eq company.id this.selectedCompany}}>{{company.name}}</option>
+                {{/each}}
+            </select>
+        </div>
+    </form>
+    <div class="employee-edit-group-button">
+        <button class="btn btn-primary" {{action "onSave" post on="click" }}>Save</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        <button class="btn btn-primary" {{action "onBack" post on="click" }}>Back</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Delete this Employee?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" {{action "onDelete" employee post
+                    on="click" }}>Delete</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>

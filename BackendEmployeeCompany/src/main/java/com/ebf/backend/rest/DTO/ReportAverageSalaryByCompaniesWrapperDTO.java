@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
@@ -12,10 +13,11 @@ import java.util.Set;
 @Getter
 @Setter
 @AllArgsConstructor
+@NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL)
-@ApiModel(value = "Employees Wrapper DTO", description = "Represents an Root Employee List DTO")
-public class EmployeesWrapperDTO {
+@ApiModel(value = "Report Average Salary By Company DTO", description = "Represents an Root Report Average Salary By Company List DTO")
+public class ReportAverageSalaryByCompaniesWrapperDTO {
 
-    @ApiModelProperty(value = "Employee List")
-    Set<EmployeeDTO> employee;
+    @ApiModelProperty(value = "Report Average Salary By Company List")
+    Set<ReportAverageSalaryByCompanyDTO> reportAverageSalaryByCompany;
 }

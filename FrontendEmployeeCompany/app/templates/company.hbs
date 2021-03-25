@@ -1,0 +1,51 @@
+{{page-title "Company Edit"}}
+
+<div class="company-edit-body">
+    <div>
+        <h1>Company</h1>
+    </div>
+
+    <form class="company-edit-form">
+        <div class="input-group mb-3 company-edit-form-id">
+            <div class="input-group-prepend">
+                <span class="input-group-text company-edit-form-label" id="basic-addon1">Id</span>
+            </div>
+            <Input type="number" disabled maxlength="4" class="form-control" aria-describedby="basic-addon1"
+                @value={{this.company.id}} />
+        </div>
+        <div class="input-group mb-3">
+            <div class="input-group-prepend">
+                <span class="input-group-text company-edit-form-label" id="basic-addon2">Name</span>
+            </div>
+            <Input type="text" class="form-control" maxlength="100" placeholder="Company Name" aria-label="Company Name"
+                aria-describedby="basic-addon2" @value={{this.company.name}} />
+        </div>
+    </form>
+    <div class="company-edit-group-button">
+        <button class="btn btn-primary" {{action "onSave" company post on="click" }}>Save</button>
+        <button class="btn btn-primary" data-toggle="modal" data-target="#deleteModal">Delete</button>
+        <button class="btn btn-primary" {{action "onBack" company post on="click" }}>Back</button>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Delete</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                Delete this Company?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" data-dismiss="modal" {{action "onDelete" company post on="click" }}>Delete</button>
+                <button type="button" class="btn btn-primary" data-dismiss="modal">Cancel</button>
+            </div>
+        </div>
+    </div>
+</div>
