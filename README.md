@@ -37,6 +37,7 @@ To run the embedded server with WAR already installed, at the root of the projec
 * Ember-Notify
 * Ember-Truth-Helpers
 * Bootstrap
+* FontAwesome
 
 ### Install
 
